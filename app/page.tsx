@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface NewsItem {
   title: string;
@@ -23,6 +23,34 @@ export default function Home() {
   const [chatLoading, setChatLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [error, setError] = useState('');
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+
+  // 로컬 스토리지에서 검색 기록 불러오기
+  useEffect(() => {
+    const saved = localStorage.getItem('searchHistory');
+    if (saved) {
+      try {
+        const history = JSON.parse(saved);
+        setSearchHistory(Array.isArray(history) ? history : []);
+      } catch (e) {
+        setSearchHistory([]);
+      }
+    }
+  }, []);
+
+  // 검색 기록 저장
+  const saveSearchHistory = (keyword: string) => {
+    const trimmedKeyword = keyword.trim();
+    if (!trimmedKeyword) return;
+
+    setSearchHistory((prev) => {
+      // 중복 제거 및 최신순으로 정렬
+      const filtered = prev.filter((item) => item !== trimmedKeyword);
+      const updated = [trimmedKeyword, ...filtered].slice(0, 5); // 최근 5개만 유지
+      localStorage.setItem('searchHistory', JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +65,65 @@ export default function Home() {
     try {
       // 뉴스 검색
       const newsResponse = await fetch(`/api/news?keyword=${encodeURIComponent(keyword)}`);
+      if (!newsResponse.ok) {
+        const errorData = await newsResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || '뉴스 검색에 실패했습니다.');
+      }
+      const newsData = await newsResponse.json();
+      
+      // 뉴스 데이터 확인
+      if (!newsData.news || !Array.isArray(newsData.news) || newsData.news.length === 0) {
+        throw new Error('검색된 뉴스가 없습니다. 다른 키워드로 시도해주세요.');
+      }
+      
+      setNews(newsData.news);
+      
+      // 뉴스 검색 성공 시 검색 기록에 추가
+      saveSearchHistory(keyword);
+
+      // 뉴스 요약
+      const summaryResponse = await fetch('/api/summarize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ news: newsData.news }),
+      });
+
+      if (!summaryResponse.ok) {
+        const errorData = await summaryResponse.json().catch(() => ({}));
+        const errorMsg = errorData.details || errorData.error || '요약 생성에 실패했습니다.';
+        console.error('요약 API 오류:', errorMsg);
+        throw new Error(errorMsg);
+      }
+      const summaryData = await summaryResponse.json();
+      
+      if (summaryData.error) {
+        throw new Error(summaryData.error);
+      }
+      
+      setSummary(summaryData.summary);
+    } catch (err: any) {
+      setError(err.message || '오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 검색 기록 클릭 시 재검색
+  const handleHistoryClick = async (historyKeyword: string) => {
+    setKeyword(historyKeyword);
+    
+    // 검색 실행
+    setLoading(true);
+    setError('');
+    setNews([]);
+    setSummary('');
+    setMessages([]);
+
+    try {
+      // 뉴스 검색
+      const newsResponse = await fetch(`/api/news?keyword=${encodeURIComponent(historyKeyword)}`);
       if (!newsResponse.ok) {
         const errorData = await newsResponse.json().catch(() => ({}));
         throw new Error(errorData.error || '뉴스 검색에 실패했습니다.');
@@ -138,6 +225,24 @@ export default function Home() {
             {loading ? '검색 중...' : '검색'}
           </button>
         </form>
+        
+        {searchHistory.length > 0 && (
+          <div className="search-history">
+            <div className="search-history-title">최근 검색어</div>
+            <div className="search-history-list">
+              {searchHistory.map((item, index) => (
+                <button
+                  key={index}
+                  className="search-history-item"
+                  onClick={() => handleHistoryClick(item)}
+                  disabled={loading}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {loading && <div className="loading">뉴스를 검색하고 요약 중입니다...</div>}
