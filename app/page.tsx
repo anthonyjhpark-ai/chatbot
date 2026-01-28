@@ -33,7 +33,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'points' | 'rebounds' | 'assists'>('points');
-  const [currentSeason, setCurrentSeason] = useState('2024-25');
+  const [currentSeason, setCurrentSeason] = useState('2025-26');
 
   useEffect(() => {
     fetchPlayers();
