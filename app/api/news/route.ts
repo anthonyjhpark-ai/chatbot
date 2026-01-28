@@ -90,8 +90,18 @@ export async function GET(request: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ keyword, news: items }),
-    }).catch((err) => {
-      console.error('뉴스 데이터 저장 실패 (비동기):', err);
+    })
+    .then(async (response) => {
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('❌ 뉴스 데이터 저장 실패:', errorData);
+      } else {
+        const successData = await response.json().catch(() => ({}));
+        console.log('✅ 뉴스 데이터 저장 성공:', successData);
+      }
+    })
+    .catch((err) => {
+      console.error('❌ 뉴스 데이터 저장 요청 실패:', err);
       // 저장 실패해도 검색 결과는 반환
     });
     
