@@ -82,21 +82,21 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-900">
       {/* 헤더 */}
-      <header className="bg-gray-800 border-b border-gray-700 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <header className="bg-gray-800 border-b border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-white">
+              <h1 className="text-2xl font-bold text-white">
                 🏀 NBA 선수 스탯 대시보드
               </h1>
-              <p className="text-gray-400 mt-1">
-                {currentSeason} 시즌 평균 통계
+              <p className="text-gray-400 text-sm mt-1">
+                {currentSeason} 시즌 • 전체 {players.length}명
               </p>
             </div>
             <button
               onClick={fetchPlayers}
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 text-sm"
             >
               {loading ? '로딩 중...' : '새로고침'}
             </button>
@@ -104,64 +104,12 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* 통계 카드 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm font-medium mb-2">전체 선수</p>
-                <p className="text-3xl font-bold text-white">{players.length}</p>
-                <p className="text-gray-500 text-sm mt-1">명</p>
-              </div>
-              <div className="p-3 bg-blue-500/10 rounded-lg">
-                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm font-medium mb-2">최고 득점자</p>
-                <p className="text-2xl font-bold text-white">
-                  {topScorer?.nba_players?.name || '-'}
-                </p>
-                <p className="text-green-400 text-lg font-semibold mt-1">
-                  {topScorer?.points.toFixed(1)} 점
-                </p>
-              </div>
-              <div className="p-3 bg-green-500/10 rounded-lg">
-                <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-400 text-sm font-medium mb-2">평균 득점</p>
-                <p className="text-3xl font-bold text-white">{avgPoints}</p>
-                <p className="text-gray-500 text-sm mt-1">경기당</p>
-              </div>
-              <div className="p-3 bg-purple-500/10 rounded-lg">
-                <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* 필터 및 검색 */}
-        <div className="bg-gray-800 rounded-lg p-6 mb-8 border border-gray-700">
+        <div className="bg-gray-800 rounded-lg p-4 mb-6 border border-gray-700">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
+              <label className="block text-xs font-medium text-gray-400 mb-2">
                 선수 검색
               </label>
               <input
@@ -169,18 +117,18 @@ export default function HomePage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="선수명 또는 팀명 입력..."
-                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">
+              <label className="block text-xs font-medium text-gray-400 mb-2">
                 정렬 기준
               </label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               >
                 <option value="points">득점</option>
                 <option value="rebounds">리바운드</option>
