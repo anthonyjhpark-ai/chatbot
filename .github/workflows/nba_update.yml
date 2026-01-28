@@ -1,0 +1,47 @@
+name: NBA 데이터 자동 업데이트
+
+on:
+  # 매일 한국시간 새벽 6시 (UTC 21:00, 전날 밤 9시)
+  schedule:
+    - cron: '0 21 * * *'
+  
+  # 수동 실행 가능
+  workflow_dispatch:
+
+jobs:
+  update-nba-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 체크아웃
+        uses: actions/checkout@v4
+      
+      - name: Python 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: 필요한 패키지 설치
+        run: |
+          python -m pip install --upgrade pip
+          pip install nba_api pandas supabase python-dotenv
+      
+      - name: NBA 데이터 수집 및 Supabase 저장
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          python fetch_data.py
+      
+      - name: 완료 알림
+        if: success()
+        run: |
+          echo "✅ NBA 데이터 업데이트 성공!"
+          echo "⏰ 실행 시간: $(date)"
+      
+      - name: 실패 알림
+        if: failure()
+        run: |
+          echo "❌ NBA 데이터 업데이트 실패"
+          echo "⏰ 실행 시간: $(date)"
