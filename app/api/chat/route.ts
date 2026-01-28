@@ -27,9 +27,10 @@ export async function POST(request: NextRequest) {
     
     // 사용 가능한 모델명 (우선순위 순)
     const modelNames = [
-      'gemini-1.5-flash',      // 무료 티어 기본 모델
-      'gemini-1.5-pro',        // 무료 티어 지원
-      'gemini-pro'             // 레거시 모델
+      'gemini-2.5-flash-lite',  // 최신 경량 모델 (2026)
+      'gemini-2.0-flash-exp',   // 2.0 실험 모델
+      'gemini-1.5-flash',       // 무료 티어 기본 모델
+      'gemini-1.5-pro'          // 무료 티어 지원
     ];
 
     // 뉴스 내용을 컨텍스트로 포함
