@@ -33,7 +33,26 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'points' | 'rebounds' | 'assists'>('points');
-  const [currentSeason, setCurrentSeason] = useState('2024-25');
+  
+  // 현재 NBA 시즌 자동 계산
+  const getCurrentNBASeason = () => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // 0-based이므로 +1
+    
+    // NBA 시즌은 10월에 시작
+    // 1월~6월: 전년도 시즌, 10월~12월: 현재 연도 시즌
+    if (currentMonth >= 10) {
+      return `${currentYear}-${String(currentYear + 1).slice(-2)}`;
+    } else if (currentMonth <= 6) {
+      return `${currentYear - 1}-${String(currentYear).slice(-2)}`;
+    } else {
+      // 7월~9월 오프시즌: 다음 시즌 사용
+      return `${currentYear}-${String(currentYear + 1).slice(-2)}`;
+    }
+  };
+  
+  const [currentSeason] = useState(getCurrentNBASeason());
 
   useEffect(() => {
     fetchPlayers();

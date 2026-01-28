@@ -1,6 +1,7 @@
 """
 GitHub Actions용 NBA 데이터 수집 스크립트
 매일 자동으로 실행되어 최신 NBA 선수 스탯을 Supabase에 저장합니다.
+현재 날짜 기반으로 시즌을 자동 계산합니다.
 """
 
 from nba_api.stats.endpoints import leaguedashplayerstats
@@ -15,8 +16,37 @@ from supabase import create_client, Client
 SUPABASE_URL = os.environ.get('SUPABASE_URL')
 SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
 
-# 현재 시즌 설정
-CURRENT_SEASON = '2024-25'
+def get_current_nba_season():
+    """
+    현재 날짜를 기준으로 NBA 시즌 문자열을 자동 생성합니다.
+    
+    NBA 시즌은 10월에 시작하여 다음 해 6월에 끝납니다.
+    예: 2025년 10월 ~ 2026년 6월 = '2025-26' 시즌
+    
+    Returns:
+        str: 시즌 문자열 (예: '2025-26')
+    """
+    now = datetime.now()
+    current_year = now.year
+    current_month = now.month
+    
+    # NBA 시즌은 10월에 시작
+    # 1월~6월: 전년도 시즌 (예: 2026년 1월 = 2025-26 시즌)
+    # 7월~9월: 오프시즌, 다음 시즌 사용 (예: 2026년 7월 = 2026-27 시즌)
+    # 10월~12월: 현재 연도 시즌 (예: 2025년 10월 = 2025-26 시즌)
+    
+    if current_month >= 10:  # 10월~12월
+        season = f"{current_year}-{str(current_year + 1)[-2:]}"
+    elif current_month <= 6:  # 1월~6월
+        season = f"{current_year - 1}-{str(current_year)[-2:]}"
+    else:  # 7월~9월 (오프시즌)
+        season = f"{current_year}-{str(current_year + 1)[-2:]}"
+    
+    return season
+
+# 현재 시즌 자동 계산
+CURRENT_SEASON = get_current_nba_season()
+print(f"🏀 자동 계산된 현재 NBA 시즌: {CURRENT_SEASON}")
 
 def check_env_variables():
     """환경 변수가 올바르게 설정되었는지 확인"""
