@@ -81,7 +81,7 @@ def fetch_nba_player_stats(season=CURRENT_SEASON, max_players=50):
         columns_to_keep = [
             'PLAYER_ID', 'PLAYER_NAME', 'TEAM_ABBREVIATION',
             'GP', 'MIN', 'PTS', 'FGM', 'FG_PCT',
-            '3PM', 'FT_PCT', 'OREB', 'REB', 'AST',
+            'FG3M', 'FT_PCT', 'OREB', 'REB', 'AST',
             'TOV', 'STL', 'BLK', 'DD2', 'TD3'
         ]
         
@@ -172,7 +172,7 @@ def save_to_supabase(df, season=CURRENT_SEASON):
                     'points': float(row.get('PTS', 0)),
                     'field_goals_made': float(row.get('FGM', 0)),
                     'field_goal_percentage': float(row.get('FG_PCT', 0)) * 100,
-                    'three_pointers_made': float(row.get('3PM', 0)),
+                    'three_pointers_made': float(row.get('FG3M', 0)),
                     'free_throw_percentage': float(row.get('FT_PCT', 0)) * 100 if pd.notna(row.get('FT_PCT')) else 0,
                     'offensive_rebounds': float(row.get('OREB', 0)),
                     'rebounds': float(row.get('REB', 0)),
