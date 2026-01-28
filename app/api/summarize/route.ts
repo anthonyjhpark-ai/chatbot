@@ -115,7 +115,7 @@ ${newsText}
     return NextResponse.json(
       { 
         error: '요약 생성 중 오류가 발생했습니다.',
-        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+        details: errorMessage  // 프로덕션에서도 에러 메시지 표시 (디버깅용)
       },
       { status: 500 }
     );
