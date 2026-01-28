@@ -25,7 +25,7 @@ jobs:
       - name: 필요한 패키지 설치
         run: |
           python -m pip install --upgrade pip
-          pip install nba_api pandas supabase python-dotenv
+          pip install -r requirements.txt
       
       - name: NBA 데이터 수집 및 Supabase 저장
         env:
