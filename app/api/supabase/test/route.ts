@@ -20,7 +20,8 @@ export async function GET(request: NextRequest) {
       news_items: false,
     };
 
-    if (supabaseUrl && supabaseServiceRoleKey) {
+    const hasKey = supabaseServiceRoleKey || supabaseAnonKey;
+    if (supabaseUrl && hasKey) {
       try {
         // search_history 테이블 확인
         const { error: searchError } = await supabaseAdmin
@@ -46,9 +47,9 @@ export async function GET(request: NextRequest) {
       status: 'ok',
       environment: envStatus,
       tables: tableCheck,
-      message: supabaseServiceRoleKey 
-        ? '환경 변수가 모두 설정되었습니다.' 
-        : '⚠️ SUPABASE_SERVICE_ROLE_KEY가 설정되지 않았습니다. Vercel 환경 변수에 추가하세요.',
+      message: hasKey 
+        ? '환경 변수 및 테이블 확인 완료.' 
+        : '⚠️ NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY를 설정하세요.',
     });
   } catch (error: any) {
     return NextResponse.json({
