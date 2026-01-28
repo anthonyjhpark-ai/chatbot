@@ -93,14 +93,15 @@ def fetch_nba_player_stats(season=CURRENT_SEASON, max_players=50):
     print("=" * 80)
     
     try:
-        # NBA API에서 선수 통계 가져오기
         print("📡 NBA Stats API 연결 중...")
+        # NBA API에서 선수 통계 가져오기
+        # season='2025-26', season_type_all_star='Regular Season' 명시
         player_stats = leaguedashplayerstats.LeagueDashPlayerStats(
             season=season,
-            season_type_all_star='Regular Season',
+            season_type_all_star='Regular Season',  # 정규 시즌 명시
             per_mode_detailed='PerGame',
             measure_type_detailed_defense='Base',
-            timeout=60
+            timeout=120
         )
         
         print("⏳ 데이터 변환 중...")
