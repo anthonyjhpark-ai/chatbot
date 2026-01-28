@@ -250,7 +250,7 @@ export default function Home() {
       {news.length > 0 && (
         <>
           <div className="news-section">
-            <h2 style={{ marginBottom: '20px', fontSize: '24px', color: '#333' }}>
+            <h2 style={{ marginBottom: '24px', fontSize: '28px', color: '#1d1d1f', fontWeight: 600, letterSpacing: '-0.01em' }}>
               검색된 뉴스 ({news.length}개)
             </h2>
             <div className="news-list">
@@ -279,7 +279,7 @@ export default function Home() {
             <div className="chat-title">💬 뉴스에 대해 질문해보세요</div>
             <div className="chat-messages">
               {messages.length === 0 && (
-                <div style={{ color: '#999', textAlign: 'center', padding: '20px' }}>
+                <div style={{ color: '#86868b', textAlign: 'center', padding: '24px', fontSize: '15px', fontWeight: 400 }}>
                   뉴스에 대해 궁금한 점을 물어보세요!
                 </div>
               )}

@@ -27,9 +27,16 @@ npm install
 프로젝트 루트에 `.env.local` 파일을 생성하고 다음 내용을 추가하세요:
 ```
 GEMINI_API_KEY=your_gemini_api_key_here
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 ```
 
 **⚠️ 중요**: `.env.local` 파일은 Git에 업로드되지 않습니다. API 키는 절대 공개 저장소에 노출하지 마세요.
+
+3. Supabase 데이터베이스 설정:
+   - `SUPABASE_SETUP.md` 파일을 참고하여 데이터베이스 테이블을 생성하세요.
+   - Supabase 프로젝트를 생성하고 환경 변수를 설정해야 합니다.
 
 3. 개발 서버 실행:
 ```bash

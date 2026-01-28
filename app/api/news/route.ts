@@ -82,6 +82,19 @@ export async function GET(request: NextRequest) {
       );
     }
     
+    // 뉴스 검색 성공 후 DB에 저장 (비동기, 에러가 나도 검색 결과는 반환)
+    const origin = request.headers.get('origin') || request.nextUrl.origin;
+    fetch(`${origin}/api/news/save`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ keyword, news: items }),
+    }).catch((err) => {
+      console.error('뉴스 데이터 저장 실패 (비동기):', err);
+      // 저장 실패해도 검색 결과는 반환
+    });
+    
     return NextResponse.json({ news: items });
   } catch (error: any) {
     console.error('뉴스 검색 오류 상세:', error);
