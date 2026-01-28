@@ -20,11 +20,33 @@ CURRENT_SEASON = '2024-25'
 
 def check_env_variables():
     """환경 변수가 올바르게 설정되었는지 확인"""
-    if not SUPABASE_URL or not SUPABASE_KEY:
-        print("❌ 오류: SUPABASE_URL 또는 SUPABASE_KEY 환경 변수가 설정되지 않았습니다.")
-        print("GitHub Repository Settings > Secrets and variables > Actions에서 설정하세요.")
+    print("=" * 80)
+    print("🔍 환경 변수 확인 중...")
+    print("=" * 80)
+    
+    if not SUPABASE_URL:
+        print("❌ 오류: SUPABASE_URL 환경 변수가 설정되지 않았습니다.")
+        print("\n📝 해결 방법:")
+        print("1. GitHub Repository Settings 접속")
+        print("2. Secrets and variables > Actions 클릭")
+        print("3. 'New repository secret' 클릭")
+        print("4. Name: SUPABASE_URL")
+        print("5. Secret: (Supabase URL 입력)")
         sys.exit(1)
-    print("✅ 환경 변수 확인 완료")
+    
+    if not SUPABASE_KEY:
+        print("❌ 오류: SUPABASE_KEY 환경 변수가 설정되지 않았습니다.")
+        print("\n📝 해결 방법:")
+        print("1. GitHub Repository Settings 접속")
+        print("2. Secrets and variables > Actions 클릭")
+        print("3. 'New repository secret' 클릭")
+        print("4. Name: SUPABASE_KEY")
+        print("5. Secret: (Supabase Anon Key 입력)")
+        sys.exit(1)
+    
+    print(f"✅ SUPABASE_URL: {SUPABASE_URL[:30]}...")
+    print(f"✅ SUPABASE_KEY: {SUPABASE_KEY[:20]}...")
+    print("✅ 환경 변수 확인 완료\n")
 
 def fetch_nba_player_stats(season=CURRENT_SEASON, max_players=50):
     """
@@ -42,13 +64,16 @@ def fetch_nba_player_stats(season=CURRENT_SEASON, max_players=50):
     
     try:
         # NBA API에서 선수 통계 가져오기
+        print("📡 NBA Stats API 연결 중...")
         player_stats = leaguedashplayerstats.LeagueDashPlayerStats(
             season=season,
             season_type_all_star='Regular Season',
             per_mode_detailed='PerGame',
-            measure_type_detailed_defense='Base'
+            measure_type_detailed_defense='Base',
+            timeout=60
         )
         
+        print("⏳ 데이터 변환 중...")
         # 데이터프레임으로 변환
         df = player_stats.get_data_frames()[0]
         
@@ -78,6 +103,14 @@ def fetch_nba_player_stats(season=CURRENT_SEASON, max_players=50):
         
     except Exception as e:
         print(f"❌ NBA API 오류: {str(e)}")
+        print(f"❌ 오류 타입: {type(e).__name__}")
+        print("\n💡 가능한 원인:")
+        print("1. NBA Stats API 일시적 다운 또는 Rate Limit")
+        print("2. 시즌 파라미터 오류 (현재: {})".format(season))
+        print("3. 네트워크 연결 문제")
+        print("\n💡 해결 방법:")
+        print("- 잠시 후 다시 시도하세요")
+        print("- 또는 다른 시즌으로 변경해보세요")
         sys.exit(1)
 
 def save_to_supabase(df, season=CURRENT_SEASON):
@@ -93,8 +126,14 @@ def save_to_supabase(df, season=CURRENT_SEASON):
     
     try:
         # Supabase 클라이언트 생성
+        print("🔗 Supabase 연결 시도 중...")
+        print(f"   URL: {SUPABASE_URL}")
         supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-        print("✅ Supabase 연결 성공")
+        
+        # 연결 테스트
+        print("🧪 연결 테스트 중...")
+        test_result = supabase.table('nba_players').select("id").limit(1).execute()
+        print("✅ Supabase 연결 성공\n")
         
         players_saved = 0
         stats_saved = 0
@@ -167,6 +206,15 @@ def save_to_supabase(df, season=CURRENT_SEASON):
         
     except Exception as e:
         print(f"❌ Supabase 저장 오류: {str(e)}")
+        print(f"❌ 오류 타입: {type(e).__name__}")
+        print("\n💡 가능한 원인:")
+        print("1. Supabase URL 또는 KEY가 잘못되었습니다")
+        print("2. 테이블이 생성되지 않았습니다")
+        print("3. 네트워크 연결 문제")
+        print("\n💡 해결 방법:")
+        print("1. GitHub Secrets 확인")
+        print("2. Supabase 대시보드에서 nba-schema.sql 실행")
+        print("3. Supabase 프로젝트가 활성 상태인지 확인")
         sys.exit(1)
 
 def main():
