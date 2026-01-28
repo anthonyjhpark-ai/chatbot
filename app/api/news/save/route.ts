@@ -12,19 +12,24 @@ export async function POST(request: NextRequest) {
   try {
     // 환경 변수 확인
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     
-    if (!supabaseUrl || !supabaseServiceRoleKey) {
+    if (!supabaseUrl || !supabaseAnonKey) {
       console.error('❌ Supabase 환경 변수 누락:');
       console.error('NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? '✅' : '❌');
-      console.error('SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceRoleKey ? '✅' : '❌');
+      console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? '✅' : '❌');
       return NextResponse.json(
         { 
           error: 'Supabase 환경 변수가 설정되지 않았습니다.',
-          details: 'NEXT_PUBLIC_SUPABASE_URL과 SUPABASE_SERVICE_ROLE_KEY를 확인하세요.'
+          details: 'NEXT_PUBLIC_SUPABASE_URL과 NEXT_PUBLIC_SUPABASE_ANON_KEY를 확인하세요.'
         },
         { status: 500 }
       );
+    }
+
+    if (!supabaseServiceRoleKey) {
+      console.warn('⚠️ SUPABASE_SERVICE_ROLE_KEY가 없어 anon key를 사용합니다. RLS를 비활성화하거나 익명 접근 정책을 설정하세요.');
     }
 
     const { keyword, news } = await request.json();

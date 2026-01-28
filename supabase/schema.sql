@@ -47,13 +47,18 @@ CREATE POLICY "Service role can do everything on search_history" ON search_histo
 CREATE POLICY "Service role can do everything on news_items" ON news_items
   FOR ALL USING (auth.role() = 'service_role');
 
--- 개발 환경용: 익명 사용자도 읽기 가능 (선택사항)
+-- 개발 환경용: 익명 사용자도 읽기/쓰기 가능 (개발 편의용)
 -- 프로덕션에서는 이 정책을 제거하거나 더 엄격하게 설정하세요.
-CREATE POLICY "Allow anonymous read access to search_history" ON search_history
-  FOR SELECT USING (true);
+-- 주의: anon key만 사용하는 경우 이 정책이 필요합니다.
+CREATE POLICY "Allow anonymous access to search_history" ON search_history
+  FOR ALL USING (true);
 
-CREATE POLICY "Allow anonymous read access to news_items" ON news_items
-  FOR SELECT USING (true);
+CREATE POLICY "Allow anonymous access to news_items" ON news_items
+  FOR ALL USING (true);
+
+-- 또는 RLS를 완전히 비활성화하려면 아래 주석을 해제하세요:
+-- ALTER TABLE search_history DISABLE ROW LEVEL SECURITY;
+-- ALTER TABLE news_items DISABLE ROW LEVEL SECURITY;
 
 -- ============================================
 -- 4. 테이블 확인 쿼리 (선택사항)

@@ -17,9 +17,16 @@ if (!supabaseServiceRoleKey) {
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // 서버 사이드에서 사용할 클라이언트 (서비스 롤 키 사용)
+// service_role_key가 없으면 anon_key로 폴백 (RLS 비활성화 필요)
+const adminKey = supabaseServiceRoleKey || supabaseAnonKey;
+
+if (!supabaseServiceRoleKey && supabaseAnonKey) {
+  console.warn('⚠️ SUPABASE_SERVICE_ROLE_KEY가 없어 anon key를 사용합니다. RLS를 비활성화하거나 service_role_key를 설정하세요.');
+}
+
 export const supabaseAdmin = createClient(
   supabaseUrl,
-  supabaseServiceRoleKey || supabaseAnonKey,
+  adminKey,
   {
     auth: {
       autoRefreshToken: false,
