@@ -1,19 +1,19 @@
-import type { Metadata } from 'next'
-import './globals.css'
+import type { Metadata } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: '뉴스 챗봇',
-  description: '키워드로 뉴스를 검색하고 요약하며 대화할 수 있는 챗봇',
-}
+  title: 'NBA 선수 스탯 대시보드',
+  description: 'NBA 선수들의 일일 스탯을 기반으로 한 종합 점수 랭킹 시스템',
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body className="antialiased">{children}</body>
     </html>
-  )
+  );
 }

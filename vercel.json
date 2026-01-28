@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/stats/collect",
+      "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/stats/calculate",
+      "schedule": "30 12 * * *"
+    }
+  ]
+}
